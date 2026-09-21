@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin de Horários | Samuel Castro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,800;1,700;1,800&family=Poppins:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#1a6175;
+  --brand-hover:#247e96;
+  --brand-deep:#0f3b48;
+  --ink:#1e2a2e;
+  --muted:#4d6670;
+  --gray:#f5f7f8;
+  --line:#d9e2e6;
+  --free:#1e8e5a;
+  --free-bg:#e8f7ef;
+  --busy:#c0392b;
+  --busy-bg:#fbebe9;
+  --display:'Montserrat',system-ui,sans-serif;
+  --sub:'Poppins',system-ui,sans-serif;
+  --text:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--gray);color:var(--ink);font:400 1rem/1.5 var(--text)}
+.wrap{max-width:760px;margin:0 auto;padding:0 1.25rem}
+header{background:#fff;border-bottom:1px solid var(--line);padding:1.25rem 0}
+header .wrap{display:flex;align-items:center;justify-content:space-between}
+header h1{font:800 1.15rem var(--display);color:var(--brand);margin:0}
+header h1 small{display:block;font:500 .8rem var(--text);color:var(--muted);text-transform:none;letter-spacing:0}
+main{padding:2rem 0 4rem}
+
+/* Login */
+.login-box{max-width:360px;margin:3rem auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:2rem}
+.login-box h2{font:700 1.1rem var(--sub);margin:0 0 .3rem;color:var(--brand)}
+.login-box p{color:var(--muted);margin:0 0 1.25rem;font-size:.95rem}
+.login-box input{width:100%;padding:.75rem .9rem;border:1px solid var(--line);border-radius:8px;font:inherit;margin-bottom:.75rem}
+.login-box input:focus{outline:2px solid var(--brand);outline-offset:1px}
+.btn{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:.7rem 1.2rem;background:var(--brand);color:#fff;font:600 1rem var(--text);border:0;border-radius:8px;cursor:pointer;transition:background .2s}
+.btn:hover{background:var(--brand-hover)}
+.err{color:var(--busy);font-size:.9rem;min-height:1.2em;margin:-.25rem 0 .75rem}
+
+/* Painel */
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}
+.panel-head p{color:var(--muted);font-size:.9rem;margin:.2rem 0 0}
+.logout{background:none;border:1px solid var(--line);border-radius:8px;padding:.5rem .9rem;font:600 .85rem var(--text);color:var(--muted);cursor:pointer}
+.logout:hover{border-color:var(--brand);color:var(--brand)}
+
+.day-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1.5rem;margin-bottom:1.25rem}
+.day-card h3{font:800 1.1rem var(--display);color:var(--brand);margin:0 0 1rem}
+.instr{display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--gray);border-left:4px solid var(--brand);border-radius:6px;padding:.65rem 1rem;margin-bottom:1.1rem;font:600 .9rem var(--text);color:var(--brand-deep)}
+.instr small{display:block;font:500 .78rem var(--text);color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.6rem}
+.slot-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;padding:.8rem .5rem;border-radius:8px;border:1px solid transparent;font:600 .95rem var(--text);cursor:pointer;transition:transform .1s}
+.slot-btn:active{transform:scale(.97)}
+.slot-btn b{font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+.slot-btn.livre{background:var(--free-bg);color:var(--free);border-color:#c7ebd7}
+.slot-btn.ocupado{background:var(--busy-bg);color:var(--busy);border-color:#f3cac5}
+.slot-btn span{font-size:.65rem;opacity:.75}
+.hint{color:var(--muted);font-size:.85rem;margin-top:1.5rem}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Samuel Castro<small>Admin de Horários</small></h1>
+    <button class="logout" id="logoutBtn" hidden>Sair</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Tela de senha -->
+  <section id="loginView">
+    <div class="login-box">
+      <h2>Área restrita</h2>
+      <p>Digite a senha para gerenciar os horários.</p>
+      <form id="loginForm">
+        <input type="password" id="pwInput" placeholder="Senha" autocomplete="current-password">
+        <p class="err" id="loginErr"></p>
+        <button class="btn" type="submit">Entrar</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Painel -->
+  <section id="panelView" hidden>
+    <div class="panel-head">
+      <div>
+        <h2 style="font:700 1.2rem var(--sub);margin:0;color:var(--ink)">Gerenciar horários</h2>
+        <p>Clique em um horário para alternar entre Livre e Ocupado. A alteração é salva na hora.</p>
+      </div>
+    </div>
+    <div id="days"></div>
+    <p class="hint">Os horários de Instrução (turma fechada) aparecem só como informação — não têm status para alternar.<br>
+      As mudanças feitas aqui aparecem na página pública de Horários do site (mesmo navegador/dispositivo).</p>
+  </section>
+
+</main>
+
+<script src="horarios-data.js"></script>
+<script>
+/* =====================================================================
+   SENHA DO ADMIN
+   Para trocar a senha, edite o valor abaixo e salve o arquivo.
+   Ex.: const ADMIN_PASSWORD = 'novaSenha123';
+   ===================================================================== */
+const ADMIN_PASSWORD = 'samuel2026';
+
+const SESSION_KEY = 'sc_admin_session';
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+const loginView = $('#loginView');
+const panelView = $('#panelView');
+const logoutBtn = $('#logoutBtn');
+
+function renderDays() {
+  $('#days').innerHTML = HorariosData.SCHEDULE.map(d => `
+    <article class="day-card">
+      <h3>${d.day}</h3>
+      <div class="instr"><small>Instrução</small>${d.instrucao}</div>
+      <div class="slots">
+        ${d.slots.map(s => {
+          const st = HorariosData.getStatus(d.key, s);
+          return `<button type="button" class="slot-btn ${st}" data-day="${d.key}" data-slot="${s}">
+            <span>${s}</span><b>${st === 'livre' ? 'Livre' : 'Ocupado'}</b>
+          </button>`;
+        }).join('')}
+      </div>
+    </article>`
+  ).join('');
+}
+
+// Clique em qualquer horário alterna o status e re-renderiza (delegação de evento)
+$('#days').addEventListener('click', e => {
+  const btn = e.target.closest('.slot-btn');
+  if (!btn) return;
+  HorariosData.toggleStatus(btn.dataset.day, btn.dataset.slot);
+  renderDays();
+});
+
+function showPanel() {
+  loginView.hidden = true;
+  panelView.hidden = false;
+  logoutBtn.hidden = false;
+  renderDays();
+}
+
+function showLogin() {
+  loginView.hidden = false;
+  panelView.hidden = true;
+  logoutBtn.hidden = true;
+  $('#pwInput').value = '';
+  $('#loginErr').textContent = '';
+}
+
+$('#loginForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if ($('#pwInput').value === ADMIN_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    showPanel();
+  } else {
+    $('#loginErr').textContent = 'Senha incorreta. Tente novamente.';
+  }
+});
+
+logoutBtn.addEventListener('click', () => {
+  sessionStorage.removeItem(SESSION_KEY);
+  showLogin();
+});
+
+// Mantém a sessão enquanto a aba do navegador estiver aberta
+if (sessionStorage.getItem(SESSION_KEY) === '1') showPanel(); else showLogin();
+</script>
+</body>
+</html>
